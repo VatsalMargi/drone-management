@@ -1,0 +1,128 @@
+// File: prisma/schema.prisma
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String        @id @default(cuid())
+  name          String?
+  email         String?       @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  organizationId String?
+  organization  Organization? @relation(fields: [organizationId], references: [id])
+}
+
+model Organization {
+  id      String   @id @default(cuid())
+  name    String
+  users   User[]
+  drones  Drone[]
+  surveys SurveyReport[]
+}
+
+model Drone {
+  id             String      @id @default(cuid())
+  name           String
+  model          String?
+  status         DroneStatus @default(AVAILABLE)
+  batteryLevel   Int         @default(100)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  currentMission Mission?
+}
+
+model Mission {
+  id                   String        @id @default(cuid())
+  name                 String
+  status               MissionStatus @default(PLANNED)
+  flightPath           Json?
+  flightAltitude       Float
+  dataCollectionParams Json?
+  surveyPattern        SurveyPattern @default(GRID)
+  overlapPercentage    Float?
+  progress             Int           @default(0)
+  estimatedTimeLeft    Int?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  droneId              String?       @unique
+  drone                Drone?        @relation(fields: [droneId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  surveyReport         SurveyReport?
+}
+
+model SurveyReport {
+  id              String       @id @default(cuid())
+  missionId       String       @unique
+  mission         Mission      @relation(fields: [missionId], references: [id])
+  summary         String
+  flightDuration  Int
+  distanceCovered Float
+  areaCovered     Float
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt       DateTime     @default(now())
+}
+
+enum DroneStatus {
+  AVAILABLE
+  IN_MISSION
+  INACTIVE
+  MAINTENANCE
+}
+
+enum MissionStatus {
+  PLANNED
+  IN_PROGRESS
+  PAUSED
+  COMPLETED
+  ABORTED
+}
+
+enum SurveyPattern {
+  GRID
+  CROSSHATCH
+  PERIMETER
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
