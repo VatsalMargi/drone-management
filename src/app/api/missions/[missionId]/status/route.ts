@@ -22,6 +22,7 @@ export async function GET(
 
   // Simulate flight progress only if in progress
   if (mission.status === 'IN_PROGRESS') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const flightPath = mission.flightPath as any;
     // Handle cases where flight path might not be defined
     if (!flightPath?.geometry?.coordinates[0]) {
