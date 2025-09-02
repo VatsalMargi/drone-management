@@ -1,16 +1,16 @@
-// File: src/app/api/missions/[missionId]/status/route.ts (Definitive Fix)
+// File: src/app/api/missions/[missionId]/status/route.ts (Final Fix)
 
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
-// FIX 1: The second argument is a single `context` object.
-// We accept the whole object, instead of trying to destructure `{ params }` from it.
 export async function GET(
   request: NextRequest,
-  context: { params: { missionId: string } }
+  // FIX 1: The type for `context.params` is now correctly defined as a Promise,
+  // matching the build error message precisely.
+  context: { params: Promise<{ missionId: string }> }
 ) {
-  // FIX 2: Now we access `missionId` from the `params` property of the `context` object.
-  const { missionId } = context.params;
+  // FIX 2: We must `await` the promise to get the actual params object before using it.
+  const { missionId } = await context.params;
 
   const mission = await prisma.mission.findUnique({
     where: { id: missionId },
