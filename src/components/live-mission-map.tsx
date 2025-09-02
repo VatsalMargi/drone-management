@@ -12,7 +12,7 @@ const droneIcon = new L.Icon({
     iconSize: [35, 35],
     iconAnchor: [17, 35],
 });
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function LiveMissionMap({ flightPath, currentPosition }: { flightPath: any; currentPosition: any }) {
   const waypoints = flightPath?.geometry?.coordinates[0].map((coord: number[]) => [coord[1], coord[0]]) || [];
 

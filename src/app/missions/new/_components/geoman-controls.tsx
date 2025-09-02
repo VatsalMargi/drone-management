@@ -10,6 +10,7 @@ import L, { Layer } from 'leaflet'; // Import L and Layer
 
 // Define a type for layers that have the toGeoJSON method
 interface GeoJSONLayer extends Layer {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   toGeoJSON: () => any;
 }
 
@@ -51,6 +52,7 @@ export default function GeomanControls() {
       map.eachLayer((layer) => {
         // FIX: Use `(layer as any).pm` to bypass the TypeScript error.
         // Geoman dynamically adds the `pm` property, which TypeScript doesn't know about.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if ((layer as any).pm && !(layer instanceof L.TileLayer)) {
             layer.remove();
         }

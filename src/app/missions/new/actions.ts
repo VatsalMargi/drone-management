@@ -28,6 +28,7 @@ export async function createMission(previousState: FormState, formData: FormData
         data: {
           name: formData.get('name') as string,
           flightAltitude: Number(formData.get('altitude')),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           surveyPattern: formData.get('pattern') as any, // GRID, CROSSHATCH, PERIMETER
           droneId: selectedDroneId,
           flightPath: JSON.parse(flightPathData),
