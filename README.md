@@ -95,10 +95,10 @@ My approach to building the Drone Survey Management System was grounded in a **p
 
 * **Foundation First:** The initial phase focused on establishing a modern, type-safe technology stack. I chose **Next.js 14 with the App Router** as the core framework. This enabled the use of **React Server Components** and **Server Actions**, which was central to the architecture. This approach improves performance by minimizing client-side JavaScript and simplifies the data flow by allowing server-side logic and data fetching to co-locate with the components that need them. The backend was powered by a **PostgreSQL** database managed via the **Prisma ORM**, providing end-to-end type safety from the database schema to the frontend components.
 
-* [cite_start]**Incremental Feature Development:** After establishing the foundation, I implemented the key functional requirements [cite: 15] in a logical order, ensuring each feature was stable before moving to the next:
-    1.  [cite_start]**Fleet Visualisation:** I began with the **Fleet Visualisation and Management Dashboard**[cite: 20], as it provided an immediate visual representation of the core data (drones) and confirmed the database connection was working correctly.
-    2.  [cite_start]**Mission Planning:** Next, I developed the **Mission Planning and Configuration System**[cite: 16]. [cite_start]This was the most interactive feature, requiring the integration of third-party libraries like Leaflet for map-based survey area definition[cite: 17].
-    3.  [cite_start]**Real-time Monitoring:** Finally, I tackled the most complex feature: the **Real-time Mission Monitoring Interface** [cite: 24][cite_start], including a backend simulation API and mission control actions[cite: 28].
+* **Incremental Feature Development:** After establishing the foundation, I implemented the key functional requirements in a logical order, ensuring each feature was stable before moving to the next:
+    1. **Fleet Visualisation:** I began with the **Fleet Visualisation and Management Dashboard**, as it provided an immediate visual representation of the core data (drones) and confirmed the database connection was working correctly.
+    2. **Mission Planning:** Next, I developed the **Mission Planning and Configuration System**. This was the most interactive feature, requiring the integration of third-party libraries like Leaflet for map-based survey area definition.
+    3. **Real-time Monitoring:** Finally, I tackled the most complex feature: the **Real-time Mission Monitoring Interface**, including a backend simulation API and mission control actions.
 
 ### Trade-offs Considered During Development
 
@@ -107,7 +107,7 @@ Several key decisions were made during development that involved balancing compl
 * **Real-time Implementation: Polling vs. WebSockets**
     * **Decision:** I chose to implement the real-time mission monitoring updates using client-side polling (fetching data every 3 seconds) instead of a persistent WebSocket connection.
     * **Trade-off:** Polling is less efficient and not truly "instantaneous" compared to WebSockets. It generates more server requests and has a built-in latency. However, it is significantly simpler to implement within a serverless architecture like Vercel's, as it leverages the existing stateless HTTP API routes without requiring a stateful, long-running server or a third-party WebSocket service.
-    * [cite_start]**Justification:** For this project's scope, polling was a pragmatic choice that successfully demonstrates the real-time visualization requirement [cite: 25] without introducing significant architectural complexity.
+    * **Justification:** For this project's scope, polling was a pragmatic choice that successfully demonstrates the real-time visualization requirement without introducing significant architectural complexity.
 
 * **Authentication: Deferred for Core Functionality**
     * **Decision:** We made a conscious decision to set aside an authentication system and build the application in a "single-organization" mode.
@@ -121,10 +121,11 @@ The system was designed from the ground up with safety and future adaptability i
 * **Strategy for Safety:**
     * **End-to-End Type Safety:** By using TypeScript across the entire stack and Prisma's generated types, the application is protected from a wide range of common runtime errors. Data shapes are strictly defined from the database schema all the way to the component props.
     * **Secure Server Actions:** All database mutations (creating missions, adding drones, aborting missions) are handled exclusively by **Next.js Server Actions**. This ensures that all business logic runs securely on the server and is not exposed to the client.
-    * [cite_start]**Atomic Database Operations:** For critical operations that involve multiple database updates, such as aborting a mission [cite: 28] (which changes both the `Mission` and `Drone` status), I used `prisma.$transaction`. This guarantees that the operations are atomic—either they all complete successfully, or they all fail, preventing the database from ever entering an inconsistent state.
+    * **Atomic Database Operations:** For critical operations that involve multiple database updates, such as aborting a mission (which changes both the `Mission` and `Drone` status), I used `prisma.$transaction`. This guarantees that the operations are atomic—either they all complete successfully, or they all fail, preventing the database from ever entering an inconsistent state.
 
 * **Strategy for Adaptability:**
     * **Component-Based Architecture:** The application is broken down into reusable React components, making it easy to maintain, update, or replace parts of the UI without affecting the rest of the application.
     * **Schema-Driven Development:** Prisma serves as a single source of truth for the data model. To adapt the application to new requirements, a developer only needs to update the `schema.prisma` file. Running `prisma generate` automatically updates all data types across the application, making it highly adaptable.
-    * [cite_start]**Serverless and Scalable Foundation:** The choice of Next.js and Vercel provides a serverless architecture that is inherently scalable[cite: 34]. The application can handle fluctuations in traffic without manual intervention, making the system adaptable to future growth.
+    * **Serverless and Scalable Foundation:** The choice of Next.js and Vercel provides a serverless architecture that is inherently scalable. The application can handle fluctuations in traffic without manual intervention, making the system adaptable to future growth.
+
 
