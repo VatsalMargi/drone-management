@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Drone Survey Management System
+
+A scalable platform designed for large organizations to plan, manage, and monitor autonomous drone surveys across multiple global sites. This system provides a critical backbone for drone operations, focusing on mission management, real-time monitoring, fleet coordination, and survey reporting.
+
+## Live Demo
+
+**Link to Deployed Application:** `https://drone-management-eight.vercel.app/`
+
+## Key Features
+
+This project implements the core functionalities required for a robust drone operations platform.
+
+#### Mission Planning & Configuration
+* **Interactive Map Interface:** Define survey areas and flight paths by drawing polygons directly on a map.
+* **Mission Parameters:** Configure essential flight parameters such as altitude, waypoints, and survey patterns (`GRID`, `CROSSHATCH`, `PERIMETER`).
+* **Data Parameters:** Set data collection parameters for missions.
+
+#### Fleet Visualisation & Management
+* **Centralized Dashboard:** View an organization-wide inventory of all drones in a clean, tabular format.
+* **Live Status:** See the real-time status of each drone (e.g., `Available`, `In-Mission`) and monitor vital statistics like battery level.
+* **Fleet Expansion:** Easily add new drones to the fleet.
+
+#### Real-time Mission Monitoring
+* **Live Map Visualization:** Monitor active missions on a dedicated page that visualizes the drone's real-time position moving along its planned flight path.
+* **Progress Tracking:** Display live mission progress as a percentage with status updates for `PLANNED`, `IN_PROGRESS`, `PAUSED`, `COMPLETED`, and `ABORTED` missions.
+* **Mission Control:** Start, Pause, Resume, and Abort missions directly from the user interface.
+
+## Tech Stack
+
+This project is built with a modern, scalable, and type-safe technology stack.
+
+* **Framework:** Next.js 14 (App Router)
+* **Language:** TypeScript
+* **Database:** PostgreSQL
+* **ORM:** Prisma
+* **Styling:** Tailwind CSS
+* **UI Components:** shadcn/ui
+* **Mapping:** Leaflet, React-Leaflet & Leaflet-Geoman
+* **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
+To run this project locally, follow these steps:
 
+**1. Prerequisites**
+* Node.js (v18 or later)
+* npm or yarn
+* A PostgreSQL database instance
+
+**2. Clone the Repository**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone [https://github.com/](https://github.com/)[VatsalMargi]/[drone-management].git
+cd [drone-management]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**3. Install Dependencies**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm  install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**4. Set Up Environment Variables**
+* Now, open the .env file and add your PostgreSQL database connection string:
+```bash
+cp .env.example .env
+```
+* Now, open the .env file and add your PostgreSQL database connection string:
+```bash
+# .env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+```
 
-## Learn More
+**5. Run Database Migrations**
+*Apply the database schema to your database:
+```bash
+npx prisma migrate dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+**6. Seed the Database**
+* Populate the database with initial sample data (one organization and three drones):
+```bash
+npx prisma db seed
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**7. Run the Development Server**
+```bash
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Write-Up
 
-## Deploy on Vercel
+### How I Approached the Problem
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+My approach to building the Drone Survey Management System was grounded in a **progressive, feature-driven methodology**, starting with a robust foundation and iteratively adding core functionalities. This ensured a stable and scalable application at every stage of development.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* **Foundation First:** The initial phase focused on establishing a modern, type-safe technology stack. I chose **Next.js 14 with the App Router** as the core framework. This enabled the use of **React Server Components** and **Server Actions**, which was central to the architecture. This approach improves performance by minimizing client-side JavaScript and simplifies the data flow by allowing server-side logic and data fetching to co-locate with the components that need them. The backend was powered by a **PostgreSQL** database managed via the **Prisma ORM**, providing end-to-end type safety from the database schema to the frontend components.
+
+* [cite_start]**Incremental Feature Development:** After establishing the foundation, I implemented the key functional requirements [cite: 15] in a logical order, ensuring each feature was stable before moving to the next:
+    1.  [cite_start]**Fleet Visualisation:** I began with the **Fleet Visualisation and Management Dashboard**[cite: 20], as it provided an immediate visual representation of the core data (drones) and confirmed the database connection was working correctly.
+    2.  [cite_start]**Mission Planning:** Next, I developed the **Mission Planning and Configuration System**[cite: 16]. [cite_start]This was the most interactive feature, requiring the integration of third-party libraries like Leaflet for map-based survey area definition[cite: 17].
+    3.  [cite_start]**Real-time Monitoring:** Finally, I tackled the most complex feature: the **Real-time Mission Monitoring Interface** [cite: 24][cite_start], including a backend simulation API and mission control actions[cite: 28].
+
+### Trade-offs Considered During Development
+
+Several key decisions were made during development that involved balancing complexity, speed, and technical purity.
+
+* **Real-time Implementation: Polling vs. WebSockets**
+    * **Decision:** I chose to implement the real-time mission monitoring updates using client-side polling (fetching data every 3 seconds) instead of a persistent WebSocket connection.
+    * **Trade-off:** Polling is less efficient and not truly "instantaneous" compared to WebSockets. It generates more server requests and has a built-in latency. However, it is significantly simpler to implement within a serverless architecture like Vercel's, as it leverages the existing stateless HTTP API routes without requiring a stateful, long-running server or a third-party WebSocket service.
+    * [cite_start]**Justification:** For this project's scope, polling was a pragmatic choice that successfully demonstrates the real-time visualization requirement [cite: 25] without introducing significant architectural complexity.
+
+* **Authentication: Deferred for Core Functionality**
+    * **Decision:** We made a conscious decision to set aside an authentication system and build the application in a "single-organization" mode.
+    * **Trade-off:** This decision traded multi-tenancy and user-specific data security for a much faster development cycle focused on the core drone management features outlined in the scope.
+    * **Justification:** The primary challenge was to build the mission planning, management, and monitoring systems. The architecture is ready to have a robust authentication layer added back in, where a hardcoded `organizationId` would be replaced by an ID from the user's session.
+
+### Strategy for Ensuring Safety and Adaptability
+
+The system was designed from the ground up with safety and future adaptability in mind.
+
+* **Strategy for Safety:**
+    * **End-to-End Type Safety:** By using TypeScript across the entire stack and Prisma's generated types, the application is protected from a wide range of common runtime errors. Data shapes are strictly defined from the database schema all the way to the component props.
+    * **Secure Server Actions:** All database mutations (creating missions, adding drones, aborting missions) are handled exclusively by **Next.js Server Actions**. This ensures that all business logic runs securely on the server and is not exposed to the client.
+    * [cite_start]**Atomic Database Operations:** For critical operations that involve multiple database updates, such as aborting a mission [cite: 28] (which changes both the `Mission` and `Drone` status), I used `prisma.$transaction`. This guarantees that the operations are atomic—either they all complete successfully, or they all fail, preventing the database from ever entering an inconsistent state.
+
+* **Strategy for Adaptability:**
+    * **Component-Based Architecture:** The application is broken down into reusable React components, making it easy to maintain, update, or replace parts of the UI without affecting the rest of the application.
+    * **Schema-Driven Development:** Prisma serves as a single source of truth for the data model. To adapt the application to new requirements, a developer only needs to update the `schema.prisma` file. Running `prisma generate` automatically updates all data types across the application, making it highly adaptable.
+    * [cite_start]**Serverless and Scalable Foundation:** The choice of Next.js and Vercel provides a serverless architecture that is inherently scalable[cite: 34]. The application can handle fluctuations in traffic without manual intervention, making the system adaptable to future growth.
+
