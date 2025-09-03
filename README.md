@@ -4,6 +4,12 @@ A scalable platform designed for large organizations to plan, manage, and monito
 
 ## Live Demo
 
+
+
+
+
+**Demo Video:** [Video](https://github.com/user-attachments/assets/946bc3c0-fb1d-44d0-b84b-20dcb337668d)
+
 **Link to Deployed Application:** `https://drone-management-eight.vercel.app/`
 
 ## Key Features
